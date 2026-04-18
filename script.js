@@ -1,10 +1,23 @@
+const managespinner = (status) => {
+  if (status === true) {
+    document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("card_container").classList.add("hidden");
+  } else {
+    document.getElementById("spinner").classList.add("hidden");
+    document.getElementById("card_container").classList.remove("hidden");
+  }
+};
+
 const loadjson = (id) => {
+  managespinner(true);
+  console.log("adka");
   fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues")
     .then((response) => response.json())
-    .then((object) =>{
+    .then((object) => {
       console.log(object);
-       displaycards(object.data, id)});
-    remove_active(id);
+      displaycards(object.data, id);
+    });
+  remove_active(id);
 };
 const remove_active = (id) => {
   const btns = document.querySelectorAll(".btn");
@@ -15,7 +28,7 @@ const remove_active = (id) => {
       btn.classList.remove("active");
     }
   });
-}
+};
 const displaycards = (data, id) => {
   console.log(data);
   const container = document.getElementById("card_container");
@@ -23,7 +36,7 @@ const displaycards = (data, id) => {
 
   for (info of data) {
     // console.log(info.status,id);
-    if ((id !== "button_all") && (info.status !== id)) {
+    if (id !== "button_all" && info.status !== id) {
       continue;
     }
     // console.log(info);
@@ -38,17 +51,16 @@ const displaycards = (data, id) => {
       info.status === "open"
         ? "<img src='assets/Open-Status.png'>"
         : "<img src='assets/Closed- Status .png'>";
-    let border_col = 
-      info.status === "open"
-        ? "border-green-500"
-        : "border-purple-500";
+    let border_col =
+      info.status === "open" ? "border-green-500" : "border-purple-500";
 
-    let badge_class = 
+    let badge_class =
       info.priority === "high"
         ? "text-red-600 badge-secondary"
         : info.priority === "medium"
-        ? "text-orange-500 badge-warning": "text-purple-500 badge-primary";
-       
+          ? "text-orange-500 badge-warning"
+          : "text-purple-500 badge-primary";
+
     card.innerHTML = `
       <div id = "card" onclick="loadjson_id(${info.id})" class="border-t-4 ${border_col} h-full card bg-base-100 shadow-xl">
         <div class="card-body">
@@ -71,26 +83,27 @@ const displaycards = (data, id) => {
 
     container.appendChild(card);
   }
-  document.getElementById("card_count").innerText = (container.childElementCount)
+  document.getElementById("card_count").innerText = container.childElementCount;
+  managespinner(false);
 };
 
 loadjson("button_all");
 
 const loadjson_id = (id) => {
-  console.log(id)
+  console.log(id);
   fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
     .then((response) => response.json())
     .then((object) => showdetail(object.data));
-    // remove_active(id);
+  // remove_active(id);
 };
 const showdetail = (object) => {
-  let status = object.status === "open" ? "opened": "closed";
+  let status = object.status === "open" ? "opened" : "closed";
   let badges = object.labels
-      .map((label) => {
-        return `
+    .map((label) => {
+      return `
             <div class="mt-2 badge badge-soft badge-primary">${label}</div>`;
-      })
-      .join("");  
+    })
+    .join("");
   document.getElementById("details_container").innerHTML = `
   <div>
     <h1 class = "text-1xl font-bold">${object.title}</h1>
@@ -123,12 +136,14 @@ const showdetail = (object) => {
 document.getElementById("search_btn").addEventListener("click", function () {
   const input_text = document.getElementById("search_input").value;
   console.log(input_text);
-  fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${input_text}`)
+  fetch(
+    `https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${input_text}`,
+  )
     .then((response) => response.json())
     .then((object) => {
       console.log(object);
-      displaycards(object.data,"button_all")}
-    );
+      displaycards(object.data, "button_all");
+    });
 });
 
 
