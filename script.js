@@ -44,7 +44,7 @@ const displaycards = (data, id) => {
     let badges = info.labels
       .map((label) => {
         return `
-            <div class="badge badge-soft badge-primary">${label}</div>`;
+            <div class="badge badge-soft badge-warning">${label}</div>`;
       })
       .join("");
     let status_img =
