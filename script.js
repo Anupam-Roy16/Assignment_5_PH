@@ -120,3 +120,15 @@ const showdetail = (object) => {
   `;
   my_modal_1.showModal();
 };
+document.getElementById("search_btn").addEventListener("click", function () {
+  const input_text = document.getElementById("search_input").value;
+  console.log(input_text);
+  fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${input_text}`)
+    .then((response) => response.json())
+    .then((object) => {
+      console.log(object);
+      displaycards(object.data,"button_all")}
+    );
+});
+
+
